@@ -2,7 +2,7 @@ import { defineConfig } from 'vite';
 import path from 'path';
 
 export default defineConfig({
-  base: '/Space-apps-orrery-web-app/',
+  base: '/POST-Space-apps-orrery-web-app/',
   resolve: {
     alias: {
       '@': path.resolve(__dirname, 'src'),

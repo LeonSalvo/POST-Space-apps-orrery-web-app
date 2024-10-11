@@ -20,6 +20,7 @@ import {CelestialBodyList} from "./objects/CelestialBodyList";
 import {CelestialBody} from "./objects/CelestialBody";
 import {BehaviorSubject} from 'rxjs'
 import {IRing, Util} from './objects/Util';
+import { log } from 'console';
 
 CameraControls.install({THREE: THREE});
 
@@ -63,6 +64,7 @@ let simSpeedAbs = 1/2592000;
 let simSpeed = 1;
 let simSpeedPrint = 0;
 let distanceFromCamera = 0;
+let logMovement = false;
 
 
 loadingManager = new LoadingManager();
@@ -191,7 +193,7 @@ function init() {
       value = value - 50;
       if (value < 0) {
         simSpeed = -simSpeedAbs * Math.pow(2, -value / 2);
-        simSpeedPrint = -simSpeedAbs * Math.pow(2, value / 2) * 40;
+        simSpeedPrint = -simSpeedAbs * Math.pow(2, -value / 2) * 40;
       } else {
         simSpeed = simSpeedAbs * Math.pow(2, value / 2);
         simSpeedPrint = simSpeedAbs * Math.pow(2, value / 2) * 40;
@@ -604,7 +606,9 @@ function init() {
           scene.add(body.marker);
         }
       }
+      
       traceOrbits(bodyList, true);
+      
     });
 
     scene.add(...celestialBodyList.getPlanetMeshes());
@@ -614,7 +618,9 @@ function init() {
         scene.add(body.marker);
       }
     }
-    traceOrbits(bodyList, false);
+    
+    traceOrbits(bodyList, true);
+    
   }
 
   // ===== 🕹️ CONTROLS =====
@@ -669,12 +675,39 @@ function traceOrbits(bodies: CelestialBody[], isNeo: boolean) {
 
     let line = celestialBody.traceOrbits();
     if (isNeo) {
-      NEOOrbits.push(line);
+      NEOOrbits.push([celestialBody.getName(),line]);
     } else {
-      planetOrbits.push(line);
+      planetOrbits.push([celestialBody.getName(),line]);
     }
 
     scene.add(line);
+  })
+}
+
+function updateOrbits(bodies: CelestialBody[], NEOOrbits: any[], planetOrbits: any[], isNeo: boolean) {
+  NEOOrbits.forEach(celestialBody => {
+    bodies.forEach(body => {
+      if (!isNeo) {
+        if (celestialBody.getName() === "Moon") return;
+      }
+      if (celestialBody[0] === body.getName()) {
+        scene.remove(celestialBody[1]);
+        celestialBody[1] = body.realTimeOrbitUpdate();
+        scene.add(celestialBody[1]);
+      }
+    })
+  })
+  planetOrbits.forEach(celestialBody => {
+    bodies.forEach(body => {
+      if (!isNeo) {
+        if (celestialBody.getName() === "Moon") return;
+      }
+      if (celestialBody[0] === body.getName()) {
+        scene.remove(celestialBody[1]);
+        celestialBody[1] = body.realTimeOrbitUpdate();
+        scene.add(celestialBody[1]);
+      }
+    })
   })
 }
 
@@ -688,17 +721,21 @@ function animate() {
     distanceFromCamera = camera.position.distanceTo(celestialBody.marker.position);
     if (celestialBody.name === "Moon"){
       simSpeed = simSpeed/100;
-      celestialBody.update(epoch, simSpeed, distanceFromCamera, camera);
+      celestialBody.update(epoch, simSpeed, distanceFromCamera, camera, logMovement);
       simSpeed = simSpeed*100;
     } else {
-      celestialBody.update(epoch, simSpeed, distanceFromCamera, camera);
+      celestialBody.update(epoch, simSpeed, distanceFromCamera, camera, logMovement);
     }
   })
 
   celestialBodyList.getNeos().forEach(celestialBody => {
     distanceFromCamera = camera.position.distanceTo(celestialBody.marker.position);
-    celestialBody.update(epoch, simSpeed, distanceFromCamera, camera);
+    celestialBody.update(epoch, simSpeed, distanceFromCamera, camera, logMovement);
   });
+  
+  if(logMovement == true){
+    updateOrbits(celestialBodyList.getPlanets(), NEOOrbits, planetOrbits, true);
+  }
 
   updateTheDate();
 
@@ -717,7 +754,6 @@ function animate() {
     )
 
   }
-
 
   cameraControls.update(delta);
 

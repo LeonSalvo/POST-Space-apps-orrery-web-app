@@ -35,6 +35,7 @@ export class CelestialBody {
     textMesh: THREE.Mesh | undefined;
     orbPos: any[];
     lastUpdate: Date = new Date();
+    description: string;
 
 
     constructor(
@@ -56,6 +57,7 @@ export class CelestialBody {
         rotation: number,
         axis: Euler,
         castShadow: boolean = false,
+        description: string,
         ring: IRing | undefined = undefined
     ) {
         this.name = name;
@@ -79,6 +81,7 @@ export class CelestialBody {
         this.orbitColor = orbitColor;
         this.rotationBySecond = rotation;
         this.initialRotationBySecond = rotation;
+        this.description = description;
         this.axisInclicnation = axis;
 
         const geometry = new THREE.SphereGeometry(this.radius, 32, 32);

@@ -43,6 +43,28 @@ export class Util {
     });
   }
 
+  static CSVToDict(csvPath: string): Promise<Map<string, string>> {
+    return new Promise((resolve, reject) => {
+      Papa.parse(csvPath, {
+        header: true,
+        download: true,
+        skipEmptyLines: true,
+        delimiter: ",",
+        complete: function (results) {
+          let map = new Map<string, string>();
+          results.data.forEach((row: any) => {
+            map.set(row["Planet"], row["Description"]);
+          });
+          resolve(map);
+        },
+        error: function (error) {
+          reject(error);
+        }
+      })
+    });
+
+  }
+
   static SUNMASS = 1.989e30;
   static GRAVITATIONALCONSTANT = 6.67430e-11;
   static AU = 1.496e8

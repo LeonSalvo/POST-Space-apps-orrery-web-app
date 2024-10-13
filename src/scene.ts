@@ -21,6 +21,7 @@ import {CelestialBody} from "./objects/CelestialBody";
 import {BehaviorSubject} from 'rxjs'
 import {IRing, Util} from './objects/Util';
 import { log } from 'console';
+import i18next from "i18next";
 
 CameraControls.install({THREE: THREE});
 
@@ -67,68 +68,12 @@ let distanceFromCamera = 0;
 let logMovement = false;
 
 
-loadingManager = new LoadingManager();
 Util.generateFont()
 
 
-loadingManager.onStart = (url, itemsLoaded, itemsTotal) => {
-  console.log('🔄 Comenzando la carga de recursos...');
-};
-
-loadingManager.onProgress = (url, itemsLoaded, itemsTotal) => {
-  let percentage = Math.floor((itemsLoaded / itemsTotal) * 100);
-  document.querySelector("p#percentage")!.textContent = `${percentage}%`;
-  // @ts-ignore
-  document.querySelector("div#percentage-loading").style.width = `${percentage}%`;
-  document.querySelector("h3#current-resource").textContent = url;
-  console.log(`📥 Cargando recurso: ${url} -> ${itemsLoaded} / ${itemsTotal}`);
-};
 
 
 
-loadingManager.onLoad = () => {
-  console.log('✅ ¡Todos los recursos cargados! Iniciando la escena...');
-  init();
-  animate()
-
-  // @ts-ignore
-  document.querySelector("div#over-canvas").style.animation = 'fadeIn 1s forwards';
-  // @ts-ignore
-  document.querySelector("div#resources").style.animation = 'fadeOut 1s forwards';
-  setTimeout(() => {
-    // @ts-ignore
-    document.querySelector("div#resources").style.display = 'none';
-  }, 1000);
-};
-
-loadingManager.onError = (url) => {
-  console.log(`❌ Error cargando: ${url}`);
-};
-
-const textureLoader = new THREE.TextureLoader(loadingManager);
-let textures = [
-  "earthMap.png",
-  "galaxy.png",
-  "JupiterMap.jpg",
-  "logo.png",
-  "lunasGenericasMap.jpg",
-  "marsMap.jpg",
-  "mercuryMap.jpg",
-  "moon.jpg",
-  "neptuneMap.jpg",
-  "rings2.jpg",
-  "roundearth.png",
-  "saturnMap.jpg",
-  "skybox.png",
-  "space-background.webp",
-  "sun.jpg",
-  "uranusMap.jpg",
-  "venusMap.jpg",
-];
-
-textures.forEach(texture => {
-  textureLoader.load(`${texture}`);
-});
 
 function init() {
   // ===== 🖼️ CANVAS, RENDERER, & SCENE =====
@@ -150,135 +95,135 @@ function init() {
     planetOrbitsCheck = document.querySelector("input#orbits-planet");
     NEOOrbitCheck = document.querySelector("input#orbits-neo");
 
-    planetOrbitsCheck.checked = true;
-    NEOOrbitCheck.checked = true;
+    // planetOrbitsCheck.checked = true;
+    // NEOOrbitCheck.checked = true;
 
-    planetOrbitsCheck.addEventListener('change', () => {
-      if (planetOrbitsCheck.checked) {
-        planetOrbits.forEach((line) => {
-          scene.add(line);
-        });
-      } else {
-        planetOrbits.forEach((line) => {
-          scene.remove(line);
-        });
-      }
-    });
+    // planetOrbitsCheck.addEventListener('change', () => {
+    //   if (planetOrbitsCheck.checked) {
+    //     planetOrbits.forEach((line) => {
+    //       scene.add(line);
+    //     });
+    //   } else {
+    //     planetOrbits.forEach((line) => {
+    //       scene.remove(line);
+    //     });
+    //   }
+    // });
+    //
+    // NEOOrbitCheck.addEventListener('change', () => {
+    //   if (NEOOrbitCheck.checked) {
+    //     NEOOrbits.forEach((line) => {
+    //       scene.add(line);
+    //     });
+    //   } else {
+    //     NEOOrbits.forEach((line) => {
+    //       scene.remove(line);
+    //     });
+    //   }
+    // });
 
-    NEOOrbitCheck.addEventListener('change', () => {
-      if (NEOOrbitCheck.checked) {
-        NEOOrbits.forEach((line) => {
-          scene.add(line);
-        });
-      } else {
-        NEOOrbits.forEach((line) => {
-          scene.remove(line);
-        });
-      }
-    });
+    // dateText.textContent = epoch.toDateString();
+    //
+    // inputDate.addEventListener('input', () => {
+    //   simulatedTime();
+    //   if (celestialBodyList) {
+    //     celestialBodyList.getPlanets().forEach(celestialBody => {
+    //       celestialBody.setRotationSpeed(celestialBody.initialRotationBySecond * simSpeed * 2592000 / 32);
+    //     });
+    //   }
+    // });
 
-    dateText.textContent = epoch.toDateString();
+    // function simulatedTime() {
+    //   let value = Number(inputDate.value);
+    //   value = value - 50;
+    //   if (value < 0) {
+    //     simSpeed = -simSpeedAbs * Math.pow(2, -value / 2);
+    //     simSpeedPrint = -simSpeedAbs * Math.pow(2, -value / 2) * 40;
+    //   } else {
+    //     simSpeed = simSpeedAbs * Math.pow(2, value / 2);
+    //     simSpeedPrint = simSpeedAbs * Math.pow(2, value / 2) * 40;
+    //   }
+    //
+    //   timeScaleText.innerHTML = simSpeedPrint.toFixed(2).toString() + " days / sec";
+    // }
 
-    inputDate.addEventListener('input', () => {
-      simulatedTime();
-      if (celestialBodyList) {
-        celestialBodyList.getPlanets().forEach(celestialBody => {
-          celestialBody.setRotationSpeed(celestialBody.initialRotationBySecond * simSpeed * 2592000 / 32);
-        });
-      }
-    });
+    // simulatedTime();
 
-    function simulatedTime() {
-      let value = Number(inputDate.value);
-      value = value - 50;
-      if (value < 0) {
-        simSpeed = -simSpeedAbs * Math.pow(2, -value / 2);
-        simSpeedPrint = -simSpeedAbs * Math.pow(2, -value / 2) * 40;
-      } else {
-        simSpeed = simSpeedAbs * Math.pow(2, value / 2);
-        simSpeedPrint = simSpeedAbs * Math.pow(2, value / 2) * 40;
-      }
+    // similaritiesList.style.display = 'none';
 
-      timeScaleText.innerHTML = simSpeedPrint.toFixed(2).toString() + " days / sec";
-    }
-
-    simulatedTime();
-
-    similaritiesList.style.display = 'none';
-
-    function listAll() {
-      similaritiesList.style.display = 'block';
-      let planetTitle = document.createElement('h4');
-      planetTitle.innerHTML = "Planets";
-      similaritiesListObjects.appendChild(planetTitle);
-
-      celestialBodyList.getPlanets().forEach((body) => {
-        generateElements(body);
-      });
-      let neoTitle = document.createElement('h4');
-      neoTitle.innerHTML = "Near Earth Objects";
-      similaritiesListObjects.appendChild(neoTitle);
-      celestialBodyList.getNeos().forEach((body) => {
-        generateElements(body);
-      });
-    }
-
-    function generateElements(body: CelestialBody) {
-      let bodyElement = document.createElement('a');
-      bodyElement.classList.add('dropdown-item');
-      bodyElement.innerHTML = body.getName();
-      if (bodyElement.innerHTML === selectedBody.getValue()?.getName()) {
-        bodyElement.classList.add('selected');
-      }
-      bodyElement.addEventListener('click', () => {
-        selectedBody.next(body);
-        similaritiesListObjects.innerHTML = '';
-        similaritiesList.style.display = 'none';
-      });
-      similaritiesListObjects.appendChild(bodyElement);
-    }
-
-    searchBar.addEventListener('focusout', () => {
-      setTimeout(() => {
-        similaritiesList.style.display = 'none';
-        similaritiesListObjects.innerHTML = '';
-      }, 250);
-    })
-
-    searchBar.addEventListener('focus', () => {
-      listAll();
-    });
-
-    searchBar.addEventListener('input', () => {
-      let query = searchBar.value;
-      if (query.length === 0) {
-        similaritiesListObjects.innerHTML = '';
-        listAll()
-        return
-      }
-
-      similaritiesList.style.display = 'block';
-      similaritiesListObjects.innerHTML = '';
-      similaritiesList.style.display = 'block';
-      let planetTitle = document.createElement('h4');
-      planetTitle.innerHTML = "Planets";
-      similaritiesListObjects.appendChild(planetTitle);
-      celestialBodyList.getPlanets().forEach((body) => {
-        if (body.getName().toLowerCase().includes(query.toLowerCase())) {
-          generateElements(body);
-        }
-      });
-
-      let neoTitle = document.createElement('h4');
-      neoTitle.innerHTML = "Near Earth Objects";
-      similaritiesListObjects.appendChild(neoTitle);
-      let objects = celestialBodyList.getNeos();
-      objects.forEach((body) => {
-        if (body.getName().toLowerCase().includes(query.toLowerCase())) {
-          generateElements(body);
-        }
-      });
-    });
+    // function listAll() {
+    //   similaritiesList.style.display = 'block';
+    //   let planetTitle = document.createElement('h4');
+    //   planetTitle.innerHTML = "Planets";
+    //   similaritiesListObjects.appendChild(planetTitle);
+    //
+    //   celestialBodyList.getPlanets().forEach((body) => {
+    //     generateElements(body);
+    //   });
+    //   let neoTitle = document.createElement('h4');
+    //   neoTitle.innerHTML = "Near Earth Objects";
+    //   similaritiesListObjects.appendChild(neoTitle);
+    //   celestialBodyList.getNeos().forEach((body) => {
+    //     generateElements(body);
+    //   });
+    // }
+    //
+    // function generateElements(body: CelestialBody) {
+    //   let bodyElement = document.createElement('a');
+    //   bodyElement.classList.add('dropdown-item');
+    //   bodyElement.innerHTML = body.getName();
+    //   if (bodyElement.innerHTML === selectedBody.getValue()?.getName()) {
+    //     bodyElement.classList.add('selected');
+    //   }
+    //   bodyElement.addEventListener('click', () => {
+    //     selectedBody.next(body);
+    //     similaritiesListObjects.innerHTML = '';
+    //     similaritiesList.style.display = 'none';
+    //   });
+    //   similaritiesListObjects.appendChild(bodyElement);
+    // }
+    //
+    // searchBar.addEventListener('focusout', () => {
+    //   setTimeout(() => {
+    //     similaritiesList.style.display = 'none';
+    //     similaritiesListObjects.innerHTML = '';
+    //   }, 250);
+    // })
+    //
+    // searchBar.addEventListener('focus', () => {
+    //   listAll();
+    // });
+    //
+    // searchBar.addEventListener('input', () => {
+    //   // let query = searchBar.value;
+    //   if (query.length === 0) {
+    //     similaritiesListObjects.innerHTML = '';
+    //     listAll()
+    //     return
+    //   }
+    //
+    //   similaritiesList.style.display = 'block';
+    //   similaritiesListObjects.innerHTML = '';
+    //   similaritiesList.style.display = 'block';
+    //   let planetTitle = document.createElement('h4');
+    //   planetTitle.innerHTML = "Planets";
+    //   similaritiesListObjects.appendChild(planetTitle);
+    //   celestialBodyList.getPlanets().forEach((body) => {
+    //     if (body.getName().toLowerCase().includes(query.toLowerCase())) {
+    //       generateElements(body);
+    //     }
+    //   });
+    //
+    //   let neoTitle = document.createElement('h4');
+    //   neoTitle.innerHTML = "Near Earth Objects";
+    //   similaritiesListObjects.appendChild(neoTitle);
+    //   let objects = celestialBodyList.getNeos();
+    //   objects.forEach((body) => {
+    //     if (body.getName().toLowerCase().includes(query.toLowerCase())) {
+    //       generateElements(body);
+    //     }
+    //   });
+    // });
   }
 
   // ===== 💡 LIGHTS =====

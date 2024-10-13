@@ -19,6 +19,7 @@
     "bootstrap": "^5.3.3",
     "bootstrap-icons": "^1.11.3",
     "camera-controls": "^2.9.0",
+    "i18next": "^23.15.2",
     "lil-gui": "^0.19.2",
     "papaparse": "^5.4.1",
     "rxjs": "^7.8.1",

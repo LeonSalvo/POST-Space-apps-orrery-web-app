@@ -38,28 +38,14 @@ h1 {
     line-height: 1.1;
 }
 
-
-/*
-    <label for="body-search">
-        Search for a celestial body
-    </label>
-    <input id="body-search">
- */
-
 canvas {
     height: 100%;
     width: 100%;
     outline: none;
     background-color: #000;
-    pointer-events: auto; /* Allows the canvas to receive pointer events */
+    pointer-events: auto;
 }
 
-#gui-container {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    z-index: 2; /* Ensure it is above other elements */
-}
 
 .over-canvas {
     position: absolute;
@@ -73,76 +59,6 @@ canvas {
     }
 }
 
-.similarities {
-    position: absolute;
-    width: 20rem;
-    top: 0;
-    right: 0;
-    padding: 0.5em;
-    z-index: 2;
-    background-color: rgba(0, 0, 0, 0.5);
-    backdrop-filter: blur(10px);
-    border-radius: 0 0 0 1rem;
-}
-
-hr {
-    border: none;
-    border-top: 1px solid rgba(255, 255, 255, 0.12);
-    margin: 0.5em 0;
-}
-
-.dropdown-item {
-    cursor: pointer;
-}
-
-.selected {
-    color: #01e7e7;
-}
-
-.search-bar {
-    display: flex;
-    gap: 0.5em;
-    margin-bottom: 0.5em;
-
-    width: 98%;
-}
-
-.similarities-title {
-    font-size: 1.2em;
-    font-weight: 600;
-    margin-bottom: 0.5em;
-}
-
-.similarities-list {
-    overflow-y: auto;
-    max-height: 87vh;
-    background: rgba(0, 0, 0, 0.5);
-    border-radius: 12px;
-    padding: 10px;
-    display: grid;
-    gap: 0.5em;
-}
-
-#current-time-text {
-    position: absolute;
-    font-size: 2rem;
-    padding: 0.5em;
-    z-index: 2;
-    background-color: rgba(0, 0, 0, 0.5);
-    backdrop-filter: blur(10px);
-    border-radius: 1rem;
-    top: 15%;
-    left: 50%;
-    transform: translateX(-50%);
-}
-
-.current-time{
-    animation: fadeOut 500ms 4s forwards;
-    pointer-events: none;
-    * {
-        pointer-events: none;
-    }
-}
 
 @keyframes fadeOut {
     0% {opacity: 1;}
@@ -155,31 +71,9 @@ hr {
     100% {opacity: 1;}
 }
 
-.time-slider {
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    z-index: 2;
-    padding: 0.5em;
-    background-color: rgba(0, 0, 0, 0.5);
-    backdrop-filter: blur(10px);
-    border-radius: 0 1rem 0 0;
-    width: 15rem;
-}
+/* ------------------ LOADER STYLES ------------------ */
 
-.time-slider p {
-    margin: 0;
-    font-size: 1.2em;
-    font-weight: 600;
-}
-
-.slider{
-    width: 100%;
-    height: 1.5em;
-    margin-top: 0.5em;
-}
-
-#resources {
+#resources{
     position: absolute;
     height: 100vh;
     width: 100vw;
@@ -201,6 +95,7 @@ hr {
     margin: 0;
 }
 
+#progress-image-bar,
 #progress-bar {
     width: 50%;
     height: 2em;
@@ -210,6 +105,7 @@ hr {
     position: relative;
 }
 
+#percentage-image-loading,
 #percentage-loading {
     height: 100%;
     background-color: #01e7e7;
@@ -220,6 +116,7 @@ hr {
     position: relative;
 }
 
+#percentage-image-loading,
 #percentage-loading h3 {
     position: absolute;
     width: 100%;
@@ -228,24 +125,25 @@ hr {
     margin: 0;
 }
 
+#percentage-image,
 #percentage {
     margin-top: 0.5em;
     font-size: 1.2em;
 }
 
+/* ------------------ SEARCH STYLES ------------------ */
 
-.back-button {
+.search-overlay{
     position: absolute;
-    top: 0;
-    left: 0;
-    padding: 1em;
+    backdrop-filter: blur(5px);
+    height: 100vh;
+    width: 100vw;
     z-index: 2;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
     background-color: rgba(0, 0, 0, 0.5);
-    backdrop-filter: blur(10px);
-    border-radius: 0 0 1rem 0;
 }
 
-.back-button a {
-    color: #01e7e7;
-    text-decoration: none;
-}
+

@@ -8,12 +8,22 @@
     <link rel="stylesheet" href="/src/style-map.css" />
   </head>
   <body>
+
   <div id="resources">
     <img src="logo.png">
-    <h1>Loading resources...</h1>
-    <h2>This may take a while</h2>
+    <h1 id="loading-text">Loading resources...</h1>
+    <h2 id="loading-subtitle">This may take a while</h2>
+    <br>
+    <div id="progress-image-bar">
+      <div id="percentage-image-loading" style="width: 0">
+        <h3 id="current-image-resource"></h3>
+      </div>
+    </div>
+    <p id="percentage-image">0%</p>
+    <br>
+
     <div id="progress-bar">
-      <div id="percentage-loading" style="width: 0%">
+      <div id="percentage-loading" style="width: 0">
         <h3 id="current-resource"></h3>
       </div>
     </div>
@@ -21,39 +31,17 @@
   </div>
 
     <div class="over-canvas" id="over-canvas" style="opacity: 0">
-      <div class="back-button">
-        <a href="index.html">Back</a>
-      </div>
 
-      <div class="current-time">
-        <p id="current-time-text"></p>
-      </div>
-
-      <div class="similarities">
-        <input id="body-search" class="search-bar" placeholder="Search for a celestial body" />
-        <div id="similarities">
-          <div class="similarities-list" id="similarities-object"></div>
+      <div class="search-overlay">
+        <div class="search-content">
+          <input type="text" id="search" placeholder="" />
         </div>
+
       </div>
 
-      <div class="time-slider">
-        <input type="checkbox" id="orbits-planet"/>
-        <label for="orbits-planet">Show planet orbits</label>
-
-        <br>
-
-        <input type="checkbox" id="orbits-neo"/>
-        <label for="orbits-neo">Show NEO orbits</label>
-
-        <hr>
-
-        <p id="time-scale">0.00 days / sec</p>
-        <input type="range" id="time-slider" min="0" max="100" value="50" class="slider" />
-      </div>
     </div>
 
-    <div id="gui-container"></div>
     <canvas id="scene"></canvas>
-    <script type="module" src="/src/scene.ts"></script>
+    <script type="module" src="/src/main.ts"></script>
   </body>
 </html>

@@ -480,7 +480,7 @@ function init() {
         true,
         descriptionDict["saturn"],
         {
-          ringTexture: "rings2.jpg",
+          ringTexture: "saturn-rings-top.png",
           innerRadiusMult: 1.2,
           outerRadiusMult: 2.0
         } as IRing

@@ -116,15 +116,24 @@ export class CelestialBody {
         this.marker.position.copy(this.position);
 
         if (ring !== undefined) {
-            let ringGeometry = new THREE.RingGeometry(this.radius * ring.innerRadiusMult, this.radius * ring.outerRadiusMult, 32);
-            let ringMaterial = new THREE.MeshBasicMaterial({
+            const ringGeometry = new THREE.RingGeometry(this.radius * ring.innerRadiusMult, this.radius * ring.outerRadiusMult, 64);
+            var pos = ringGeometry.attributes.position;
+            var v3 = new THREE.Vector3();
+            for (let i = 0; i < pos.count; i++){
+                v3.fromBufferAttribute(pos, i);
+                ringGeometry.attributes.uv.setXY(i, v3.length() < this.radius * ring.innerRadiusMult + 1 ? 0 : 1, 1);
+            }
+
+            const ringMaterial = new THREE.MeshBasicMaterial({
                 map: new THREE.TextureLoader().load(ring.ringTexture),
+                color: 0xffffff,
                 side: THREE.DoubleSide,
-                transparent: true,
-                opacity: 0.5
+                transparent: true
             });
-            let ringMesh = new THREE.Mesh(ringGeometry, ringMaterial);
-            ringMesh.rotation.x = Math.PI / 2;
+            const ringMesh = new THREE.Mesh(ringGeometry, ringMaterial);
+
+            ringMesh.rotation.x = this.mesh.rotation.y;
+            ringMesh.rotation.y = this.mesh.rotation.x;
             ringMesh.position.copy(this.position);
 
             ringMesh.castShadow = true;

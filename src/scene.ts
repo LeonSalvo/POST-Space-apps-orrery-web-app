@@ -689,7 +689,7 @@ function init() {
       }
     }
     
-    traceOrbits(bodyList, true);
+    traceOrbits(bodyList, false);
     
   }
 
@@ -739,10 +739,6 @@ function init() {
 
 function traceOrbits(bodies: CelestialBody[], isNeo: boolean) {
   bodies.forEach(celestialBody => {
-    if (!isNeo) {
-      if (celestialBody.getName() === "Moon") return;
-    }
-
     let line = celestialBody.traceOrbits();
     if (isNeo) {
       NEOOrbits.push([celestialBody.getName(),line]);
@@ -755,12 +751,11 @@ function traceOrbits(bodies: CelestialBody[], isNeo: boolean) {
   })
 }
 
-function updateOrbits(bodies: CelestialBody[], NEOOrbits: any[], planetOrbits: any[], isNeo: boolean) {
+function updateOrbits(NEOOrbits: any[], planetOrbits: any[]) {
+  let planets = celestialBodyList.getPlanets();
+  let neos = celestialBodyList.getNeos();
   NEOOrbits.forEach(celestialBody => {
-    bodies.forEach(body => {
-      if (!isNeo) {
-        if (celestialBody.getName() === "Moon") return;
-      }
+    neos.forEach(body => {
       if (celestialBody[0] === body.getName()) {
         scene.remove(celestialBody[1]);
         celestialBody[1] = body.realTimeOrbitUpdate();
@@ -770,10 +765,7 @@ function updateOrbits(bodies: CelestialBody[], NEOOrbits: any[], planetOrbits: a
     })
   })
   planetOrbits.forEach(celestialBody => {
-    bodies.forEach(body => {
-      if (!isNeo) {
-        if (celestialBody.getName() === "Moon") return;
-      }
+    planets.forEach(body => {
       if (celestialBody[0] === body.getName()) {
         scene.remove(celestialBody[1]);
         celestialBody[1] = body.realTimeOrbitUpdate();
@@ -811,7 +803,7 @@ function animate() {
   });
   
   if(logMovement == true){
-    updateOrbits(celestialBodyList.getPlanets(), NEOOrbits, planetOrbits, true);
+    updateOrbits(NEOOrbits, planetOrbits);
   }
 
   updateTheDate();

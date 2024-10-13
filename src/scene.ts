@@ -21,6 +21,8 @@ import {CelestialBody} from "./objects/CelestialBody";
 import {BehaviorSubject} from 'rxjs'
 import {IRing, Util} from './objects/Util';
 import { log } from 'console';
+import {select} from "three/src/nodes/math/ConditionalNode";
+import {Queue} from "queue-typescript";
 
 CameraControls.install({THREE: THREE});
 
@@ -64,7 +66,10 @@ let simSpeedAbs = 1/2592000;
 let simSpeed = 1;
 let simSpeedPrint = 0;
 let distanceFromCamera = 0;
+let logMovementCheck: HTMLInputElement;
 let logMovement = false;
+let lines = new Queue<THREE.Line>();
+let linesLimit = 20;
 
 
 loadingManager = new LoadingManager();
@@ -149,17 +154,22 @@ function init() {
 
     planetOrbitsCheck = document.querySelector("input#orbits-planet");
     NEOOrbitCheck = document.querySelector("input#orbits-neo");
+    logMovementCheck = document.querySelector("input#log-movement");
+
 
     planetOrbitsCheck.checked = true;
     NEOOrbitCheck.checked = true;
+    logMovementCheck.checked = false;
 
     planetOrbitsCheck.addEventListener('change', () => {
       if (planetOrbitsCheck.checked) {
         planetOrbits.forEach((line) => {
+          Util.limitedEnqueue(lines, line, linesLimit, scene);
           scene.add(line);
         });
       } else {
         planetOrbits.forEach((line) => {
+          Util.limitedEnqueue(lines, line, linesLimit, scene);
           scene.remove(line);
         });
       }
@@ -168,10 +178,12 @@ function init() {
     NEOOrbitCheck.addEventListener('change', () => {
       if (NEOOrbitCheck.checked) {
         NEOOrbits.forEach((line) => {
+          Util.limitedEnqueue(lines, line, linesLimit, scene);
           scene.add(line);
         });
       } else {
         NEOOrbits.forEach((line) => {
+          Util.limitedEnqueue(lines, line, linesLimit, scene);
           scene.remove(line);
         });
       }
@@ -185,6 +197,15 @@ function init() {
         celestialBodyList.getPlanets().forEach(celestialBody => {
           celestialBody.setRotationSpeed(celestialBody.initialRotationBySecond * simSpeed * 2592000 / 32);
         });
+      }
+    });
+
+    logMovementCheck.addEventListener('change', () => {
+      if (logMovementCheck.checked) {
+        logMovement = true;
+      }else {
+        logMovement = false;
+        reloadScene()
       }
     });
 
@@ -281,6 +302,12 @@ function init() {
     });
   }
 
+  function reloadScene() {
+    scene.remove(...celestialBodyList.getPlanetMeshes());
+    scene.remove(...celestialBodyList.getNeoMeshes());
+    celestialBodyList.cleanCelestialBodies();
+    init();
+  }
   // ===== 💡 LIGHTS =====
   {
     ambientLight = new AmbientLight('white', 0.05)
@@ -362,6 +389,7 @@ function init() {
         false
     );
     celestialBodyList.addPlanet(sun);
+    selectedBody.next(sun);
 
     let earth = new CelestialBody(
         "Earth",
@@ -626,7 +654,7 @@ function init() {
   // ===== 🕹️ CONTROLS =====
   {
     cameraControls.addEventListener('update', () => {
-      let distance = camera.position.distanceTo(new Vector3(0, 0, 0))
+      let distance = camera.position.distanceTo(skybox.getPosition())
       if (distance < renderSize * 0.9) {
         skybox.showGalaxy(false)
       } else {
@@ -642,7 +670,7 @@ function init() {
       cameraControls.setPosition(
           selectedBody.getValue().getPosition().x,
           selectedBody.getValue().getPosition().y,
-          selectedBody.getValue().getPosition().z,
+          selectedBody.getValue().getPosition().z - 4 * selectedBody.getValue().getRadius(),
           false
       )
 
@@ -680,6 +708,7 @@ function traceOrbits(bodies: CelestialBody[], isNeo: boolean) {
       planetOrbits.push([celestialBody.getName(),line]);
     }
 
+    Util.limitedEnqueue(lines, line, linesLimit, scene);
     scene.add(line);
   })
 }
@@ -693,6 +722,7 @@ function updateOrbits(bodies: CelestialBody[], NEOOrbits: any[], planetOrbits: a
       if (celestialBody[0] === body.getName()) {
         scene.remove(celestialBody[1]);
         celestialBody[1] = body.realTimeOrbitUpdate();
+        Util.limitedEnqueue(lines, celestialBody[1], linesLimit, scene);
         scene.add(celestialBody[1]);
       }
     })
@@ -705,6 +735,7 @@ function updateOrbits(bodies: CelestialBody[], NEOOrbits: any[], planetOrbits: a
       if (celestialBody[0] === body.getName()) {
         scene.remove(celestialBody[1]);
         celestialBody[1] = body.realTimeOrbitUpdate();
+        Util.limitedEnqueue(lines, celestialBody[1], linesLimit, scene);
         scene.add(celestialBody[1]);
       }
     })
@@ -723,7 +754,11 @@ function animate() {
       simSpeed = simSpeed/100;
       celestialBody.update(epoch, simSpeed, distanceFromCamera, camera, logMovement);
       simSpeed = simSpeed*100;
-    } else {
+    } else if(celestialBody.name === "Sun"){
+      celestialBody.update(epoch, simSpeed, distanceFromCamera, camera, logMovement);
+      let position = celestialBody.getPosition();
+      skybox.setPosition(position.x, position.y, position.z);
+    }else {
       celestialBody.update(epoch, simSpeed, distanceFromCamera, camera, logMovement);
     }
   })
@@ -778,6 +813,7 @@ function updateTheDate() {
   } else {
     epoch.setTime(epoch.getTime() + simSpeed * 24 * 3600000);
   }  // 24 hours * milliseconds in an hour * simSpeed
+
 
 }
 

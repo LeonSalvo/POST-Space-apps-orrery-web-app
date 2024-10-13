@@ -4,6 +4,7 @@ import {IRing, Util} from "./Util";
 import {FontLoader} from "three/examples/jsm/loaders/FontLoader";
 import {TextGeometry} from "three/examples/jsm/geometries/TextGeometry";
 import {CelestialBodyList} from "./CelestialBodyList";
+import {Queue} from "queue-typescript";
 
 export class CelestialBody {
     name: string;
@@ -33,7 +34,7 @@ export class CelestialBody {
     axisInclicnation: Euler;
     ringMesh: THREE.Mesh | undefined;
     textMesh: THREE.Mesh | undefined;
-    orbPos: any[];
+    orbPos: Queue<THREE.Vector3>;
     lastUpdate: Date = new Date();
 
 
@@ -309,7 +310,7 @@ export class CelestialBody {
         const orbitName = this.name + "_trace";
         line.name = orbitName;
     
-        return line;  // Return the line if you want to add it to the scene later
+        return line;
     }
 
     realTimeOrbitUpdate() {
@@ -321,7 +322,8 @@ export class CelestialBody {
 
     
         // Esta variable almacenará las posiciones actualizadas de la órbita
-        this.orbPos = this.orbPos || []; // Inicializar si no está definida
+        // Inicializar si no está definida
+        this.orbPos = this.orbPos || new Queue<THREE.Vector3>();
     
         // Calcular la posición actual usando la propagación
         const pos = this.propagate(this.trueAnomalyS);
@@ -341,10 +343,10 @@ export class CelestialBody {
     }
         
         // Añadir la nueva posición a la lista de posiciones de la órbita
-        this.orbPos.push(currentPos);
-    
+        Util.limitedEnqueue(this.orbPos, currentPos, 500, null);
+
         // Actualizar la geometría de la línea con los nuevos puntos
-        geometry.setFromPoints(this.orbPos);
+        geometry.setFromPoints(this.orbPos.toArray());
     
         orbitLine.geometry = geometry;
         orbitLine.material = material;

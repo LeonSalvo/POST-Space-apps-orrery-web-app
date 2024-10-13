@@ -21,6 +21,7 @@
     "camera-controls": "^2.9.0",
     "lil-gui": "^0.19.2",
     "papaparse": "^5.4.1",
+    "queue-typescript": "^1.0.1",
     "rxjs": "^7.8.1",
     "three": "^0.168.0"
   },

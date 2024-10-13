@@ -41,5 +41,9 @@ export class CelestialBodyList {
         return this.neos.map(celestialBody => celestialBody.mesh);
     }
 
+    public cleanCelestialBodies(): void {
+        this.planets = [];
+        this.neos = [];
+    }
 
 }

@@ -57,4 +57,13 @@ export class Skybox {
         this.skyboxMesh.visible = !bool
 
     }
+
+    getPosition(): Vector3 {
+        return this.skyboxMesh.position
+    }
+
+    setPosition(x: number, y: number, z: number) {
+        this.skyboxMesh.position.set(x, y, z)
+        this.galaxyMesh.position.set(x, y + 25500000, z)
+    }
 }

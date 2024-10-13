@@ -1,6 +1,8 @@
 import Papa from "papaparse";
 import { NEO } from "./Neo";
 import {Font, FontData, FontLoader} from "three/examples/jsm/loaders/FontLoader";
+import {Queue} from "queue-typescript";
+import * as three from "three";
 
 export class Util {
   static font: Font;
@@ -58,7 +60,17 @@ export class Util {
       });
     });
   }
+  static limitedEnqueue(queue: Queue<any>, element: any, limit: number, scene : three.Scene | null) {
+    if (queue.length >= limit) {
+      let toRemove = queue.dequeue();
+      if (scene != null){
+        scene.remove(toRemove);
+      }
+    }
+    queue.enqueue(element);
+  }
 }
+
 
 export interface IRing {
   ringTexture: string;

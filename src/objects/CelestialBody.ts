@@ -217,7 +217,6 @@ export class CelestialBody {
         }
     }
 
-    // Función de placeholder para las ecuaciones de Kepler
     calculateOrbitPosition(date: Date , simSpeed : number): THREE.Vector3 {
         var pos = this.propagate(this.trueAnomalyS)
         //console.log(this.trueAnomalyS);

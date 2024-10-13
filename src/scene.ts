@@ -659,7 +659,7 @@ function init() {
               0.0000002994132,
               new Euler(0, 0, 0, 'XYZ'),
               true,
-                descriptionDict[asteroid]
+                descriptionDict[asteroid.name]
           );
           celestialBodyList.addNeo(asteroidBody);
         }

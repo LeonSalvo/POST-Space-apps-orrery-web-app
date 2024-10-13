@@ -92,50 +92,10 @@ export class Util {
     }
     queue.enqueue(element);
   }
+
 }
 
-export function adjustRingGeometry(geom) {
-  const twopi = 2 * Math.PI;
-  const iVer = Math.max(2, geom.gridY);
-  for (let i = 0; i < iVer + 1; i++) {
-    const fRad1 = i / iVer,
-        fRad2 = (i + 1) / iVer,
-        fX1 = geom.innerRadius * Math.cos(fRad1 * twopi),
-        fY1 = geom.innerRadius * Math.sin(fRad1 * twopi),
-        fX2 = geom.outerRadius * Math.cos(fRad1 * twopi),
-        fY2 = geom.outerRadius * Math.sin(fRad1 * twopi),
-        fX4 = geom.innerRadius * Math.cos(fRad2 * twopi),
-        fY4 = geom.innerRadius * Math.sin(fRad2 * twopi),
-        fX3 = geom.outerRadius * Math.cos(fRad2 * twopi),
-        fY3 = geom.outerRadius * Math.sin(fRad2 * twopi),
-        v1 = new THREE.Vector3(fX1, fY1, 0),
-        v2 = new THREE.Vector3(fX2, fY2, 0),
-        v3 = new THREE.Vector3(fX3, fY3, 0),
-        v4 = new THREE.Vector3(fX4, fY4, 0);
-    geom.vertices.push(new THREE.Vertex(v1));
-    geom.vertices.push(new THREE.Vertex(v2));
-    geom.vertices.push(new THREE.Vertex(v3));
-    geom.vertices.push(new THREE.Vertex(v4));
-  }
-  for (let i = 0; i < iVer + 1; i++) {
-    geom.faces.push(new THREE.Face3(i * 4, i * 4 + 1, i * 4 + 2));
-    geom.faces.push(new THREE.Face3(i * 4, i * 4 + 2, i * 4 + 3));
-    geom.faceVertexUvs[0].push([
-      new THREE.UV(0, 1),
-      new THREE.UV(1, 1),
-      new THREE.UV(1, 0)
-    ]);
-    geom.faceVertexUvs[0].push([
-      new THREE.UV(0, 1),
-      new THREE.UV(1, 0),
-      new THREE.UV(0, 0)
-    ]);
-  }
-  geom.computeFaceNormals();
-  geom.boundingSphere = {
-    radius: geom.outerRadius
-  };
-}
+
 
 export interface IRing {
   ringTexture: string;

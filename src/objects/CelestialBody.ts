@@ -111,8 +111,8 @@ export class CelestialBody {
         const markerGeometry = new THREE.SphereGeometry(10, 16, 16);
         const markerMaterial = new THREE.MeshBasicMaterial({color: orbitColor, transparent: true, opacity: 0.5});
         this.marker = new THREE.Mesh(markerGeometry, markerMaterial);
-        this.marker.position.copy(this.position);
-
+        this.marker.position.copy(this.position)
+        this.marker.layers.enable(20);
         if (ring !== undefined) {
             let ringGeometry = new THREE.RingGeometry(this.radius * ring.innerRadiusMult, this.radius * ring.outerRadiusMult, 32);
             let ringMaterial = new THREE.MeshBasicMaterial({
@@ -154,7 +154,7 @@ export class CelestialBody {
         const baseSize = 1;
 
         // Calcular el tamaño del marcador en función de la distancia
-        const scaleFactor = baseSize * (distanceFromCamera / 3000);
+        const scaleFactor = baseSize * (distanceFromCamera / 1500);
         this.marker.scale.set(scaleFactor, scaleFactor, scaleFactor);
 
         this.mesh.rotation.copy(new Euler(this.mesh.rotation.x, this.mesh.rotation.y + this.rotationBySecond, this.mesh.rotation.z, "XZY"));

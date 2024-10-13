@@ -69,7 +69,7 @@ let distanceFromCamera = 0;
 let logMovementCheck: HTMLInputElement;
 let logMovement = false;
 let lines = new Queue<THREE.Line>();
-let linesLimit = 20;
+let linesLimit = 500;
 
 
 loadingManager = new LoadingManager();
@@ -207,12 +207,23 @@ function init() {
       mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
       mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
       raycaster.setFromCamera(mouse, camera);
+      raycaster.params.Points.threshold = 0.001;
+      raycaster.params.Mesh.threshold = 0.001;
       let intersects = raycaster.intersectObjects(scene.children, true);
       if (intersects.length > 0) {
         let object = intersects[0].object;
-        let body = celestialBodyList.getPlanets().find(body => body.marker === object);
-        if (body) {
-          selectedBody.next(body);
+        if (object.layers.isEnabled(20)){
+          let body = null;
+          body = celestialBodyList.getNeos().find(body => body.marker === object);
+          if (body) {
+            selectedBody.next(body);
+            return
+          }
+          body = celestialBodyList.getPlanets().find(body => body.marker === object);
+          if (body) {
+            selectedBody.next(body);
+            return
+          }
         }
       }
     });

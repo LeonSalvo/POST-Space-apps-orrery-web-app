@@ -396,6 +396,9 @@ function init() {
 
     celestialBodyList = CelestialBodyList.getInstance();
 
+    let descriptionDict = Util.CSVToDict("data/infoPlanets.csv");
+    console.log(descriptionDict);
+
     let sun = new CelestialBody(
         "Sun",
         696340,
@@ -414,7 +417,8 @@ function init() {
         0xFDB813,
         0.000072921158553,
         new Euler(0, 0, 0, 'XYZ'),
-        false
+        false,
+        descriptionDict["sun"]
     );
     celestialBodyList.addPlanet(sun);
     selectedBody.next(sun);
@@ -437,7 +441,8 @@ function init() {
         0x22ABDF,
         0.000072921158553,
         new Euler(0.4396, 0.8641, 5.869, "XYZ"),
-        true
+        true,
+        descriptionDict["earth"]
     )
     celestialBodyList.addPlanet(earth);
 
@@ -459,7 +464,8 @@ function init() {
         0xFF5E33,
         0.00007088222,
         new Euler(0.4396, 0.8641, 5.869, "XYZ"),
-        true
+        true,
+        descriptionDict["mars"]
     )
     celestialBodyList.addPlanet(mars);
 
@@ -481,7 +487,8 @@ function init() {
         0xA2440A,
         0.00017538081,
         new Euler(0.0545, 1.7541, 0.2575, "XYZ"),
-        true
+        true,
+        descriptionDict["jupiter"]
     );
     celestialBodyList.addPlanet(jupiter);
 
@@ -503,7 +510,8 @@ function init() {
         0xD8B712,
         0.0000002994132,
         new Euler(3.0960, 1.3383, 0.9578, "XYZ"),
-        true
+        true,
+        descriptionDict["venus"]
     );
     celestialBodyList.addPlanet(venus);
 
@@ -526,8 +534,9 @@ function init() {
         0.00016329833,
         new Euler(0.4665, 1.9839, 0.4574, "XYZ"),
         true,
+        descriptionDict["saturn"],
         {
-          ringTexture: "rings2.jpg",
+          ringTexture: "saturn-rings-top.png",
           innerRadiusMult: 1.2,
           outerRadiusMult: 2.0
         } as IRing
@@ -552,7 +561,8 @@ function init() {
         0xA195A8,
         0.00000123854412,
         new Euler(0.000593, 0.844493, 0.852917, "XYZ"),
-        true
+        true,
+        descriptionDict["mercury"]
     );
     celestialBodyList.addPlanet(mercury);
 
@@ -574,7 +584,8 @@ function init() {
         0x949AFF,
         -0.00010104518,
         new Euler(1.7074, 1.2915, 2.9839, "XYZ"),
-        true
+        true,
+        descriptionDict["uranus"]
     );
     celestialBodyList.addPlanet(uranus);
 
@@ -596,7 +607,8 @@ function init() {
         0x3339FF,
         0.00010865669,
         new Euler(0.4947, 2.2994, 0.7848, "XYZ"),
-        true
+        true,
+        descriptionDict["neptune"]
     );
     celestialBodyList.addPlanet(neptune);
 
@@ -618,7 +630,8 @@ function init() {
         0xA1A1A1,
         0.001,
         new Euler(0.0269, 0.8497, 0.4647, "XYZ"),
-        true
+        true,
+        descriptionDict["moon"]
     );
     celestialBodyList.addPlanet(moon);
 
@@ -645,7 +658,8 @@ function init() {
               0x7F7F7F,
               0.0000002994132,
               new Euler(0, 0, 0, 'XYZ'),
-              true
+              true,
+                descriptionDict[asteroid]
           );
           celestialBodyList.addNeo(asteroidBody);
         }

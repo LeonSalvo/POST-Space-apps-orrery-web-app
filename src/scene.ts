@@ -200,6 +200,23 @@ function init() {
       }
     });
 
+    window.addEventListener('click' , (event) => {
+      //al hacer click en un planeta se marca como seleccionado
+      let raycaster = new THREE.Raycaster();
+      let mouse = new THREE.Vector2();
+      mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+      mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+      raycaster.setFromCamera(mouse, camera);
+      let intersects = raycaster.intersectObjects(scene.children, true);
+      if (intersects.length > 0) {
+        let object = intersects[0].object;
+        let body = celestialBodyList.getPlanets().find(body => body.marker === object);
+        if (body) {
+          selectedBody.next(body);
+        }
+      }
+    });
+
     logMovementCheck.addEventListener('change', () => {
       if (logMovementCheck.checked) {
         logMovement = true;

@@ -211,18 +211,20 @@ function init() {
       raycaster.params.Mesh.threshold = 0.001;
       let intersects = raycaster.intersectObjects(scene.children, true);
       if (intersects.length > 0) {
-        let object = intersects[0].object;
-        if (object.layers.isEnabled(20)){
-          let body = null;
-          body = celestialBodyList.getNeos().find(body => body.marker === object);
-          if (body) {
-            selectedBody.next(body);
-            return
-          }
-          body = celestialBodyList.getPlanets().find(body => body.marker === object);
-          if (body) {
-            selectedBody.next(body);
-            return
+        for (let i = 0; i < intersects.length; i++) {
+          let object = intersects[i].object;
+          if (object.layers.isEnabled(20)) {
+            let body = null;
+            body = celestialBodyList.getNeos().find(body => body.marker === object);
+            if (body) {
+              selectedBody.next(body);
+              return;
+            }
+            body = celestialBodyList.getPlanets().find(body => body.marker === object);
+            if (body) {
+              selectedBody.next(body);
+              return;
+            }
           }
         }
       }

@@ -825,7 +825,7 @@ function animate() {
     )
 
     let distance = camera.position.distanceTo(selectedBodyValue.getPosition());
-    if (distance <= selectedBodyValue.getRadius() * 4) {
+    if (distance <= selectedBodyValue.getRadius() * 8) {
       document.getElementById('planet-info').style.display = 'block';
       document.getElementById('planet-name').innerText = selectedBodyValue.getName();
       document.getElementById('planet-details').innerText = `Description: ${selectedBodyValue.getDescription()}`;

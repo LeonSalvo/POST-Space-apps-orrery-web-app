@@ -1,47 +1,73 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/logo.png" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>NeoNavigator | Map </title>
-    <link rel="stylesheet" href="/src/style-map.css" />
-  </head>
-  <body>
+    <head>
+        <meta charset="UTF-8"/>
+        <link rel="icon" type="image/svg+xml" href="/logo.png"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+        <title>NeoNavigator | Map </title>
+        <link rel="stylesheet" href="/src/style-map.css"/>
+    </head>
+    <body>
 
-  <div id="resources">
-    <img src="logo.png">
-    <h1 id="loading-text">Loading resources...</h1>
-    <h2 id="loading-subtitle">This may take a while</h2>
-    <br>
-    <div id="progress-image-bar">
-      <div id="percentage-image-loading" style="width: 0">
-        <h3 id="current-image-resource"></h3>
-      </div>
+    <div id="resources">
+        <img src="logo.png">
+        <h1 id="loading-text">Loading resources...</h1>
+        <h2 id="loading-subtitle">This may take a while</h2>
+        <br>
+        <div id="progress-image-bar">
+            <div id="percentage-image-loading" style="width: 0">
+                <h3 id="current-image-resource"></h3>
+            </div>
+        </div>
+        <p id="percentage-image">0%</p>
+        <br>
+        <div id="progress-bar">
+            <div id="percentage-loading" style="width: 0">
+                <h3 id="current-resource"></h3>
+            </div>
+        </div>
+        <p id="percentage">0%</p>
     </div>
-    <p id="percentage-image">0%</p>
-    <br>
-
-    <div id="progress-bar">
-      <div id="percentage-loading" style="width: 0">
-        <h3 id="current-resource"></h3>
-      </div>
-    </div>
-    <p id="percentage">0%</p>
-  </div>
 
     <div class="over-canvas" id="over-canvas" style="opacity: 0">
-
-      <div class="search-overlay">
-        <div class="search-content">
-          <input type="text" id="search" placeholder="" />
+        <div class="search-overlay" id="search-overlay" style="display: none">
+            <div class="search-content">
+                <h1 class="search-title">Search</h1>
+                <input type="text" id="body-search" placeholder="" autocomplete="off"/>
+                <div id="similarities">
+                    <div class="similarities-list" id="similarities-object"></div>
+                </div>
+            </div>
         </div>
 
-      </div>
+        <div class="time-containter">
+            <div class="time-content">
+                <div class="time-item">
+                    <div class="time-dot red-dot"></div>
+                    <p class="time-text not-live-text" id="live-text">Not live</p>
+                </div>
 
+                <div class="time-item">
+                    <p class="time-text" id="date-text">2021-01-01</p>
+                </div>
+
+                <div class="time-item">
+                    <p class="time-text" id="time-text">00:00:00</p>
+                </div>
+            </div>
+            <input class="time-step" type="range" id="time-slider" min="0" max="100" value="50" step="1">
+        </div>
+    </div>
+
+
+    <div style="opacity: 0; position: absolute">
+        <input type="checkbox" id="orbits-planet" checked>
+        <input type="checkbox" id="orbits-neo" checked>
+        <p id="current-time-text">Current time: 2021-01-01 00:00:00</p>
+        <p id="time-scale">Time scale: 1 day = 1 second</p>
     </div>
 
     <canvas id="scene"></canvas>
     <script type="module" src="/src/main.ts"></script>
-  </body>
+    </body>
 </html>

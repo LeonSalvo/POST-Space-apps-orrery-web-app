@@ -20,8 +20,6 @@ import {CelestialBodyList} from "./objects/CelestialBodyList";
 import {CelestialBody} from "./objects/CelestialBody";
 import {BehaviorSubject} from 'rxjs'
 import {IRing, Util} from './objects/Util';
-import { log } from 'console';
-import i18next from "i18next";
 
 CameraControls.install({THREE: THREE});
 
@@ -32,7 +30,6 @@ const renderSize = 100000 * 256
 let canvas: HTMLElement
 let renderer: WebGLRenderer
 let scene: Scene
-let loadingManager: LoadingManager
 let ambientLight: AmbientLight
 let pointLight: PointLight
 let camera: PerspectiveCamera
@@ -44,12 +41,14 @@ let clock: Clock
 let selectedBody: BehaviorSubject<CelestialBody | null> = new BehaviorSubject(null);
 let selectedBodyFullyTransitioned: boolean = false;
 
+let searchOverlay: HTMLDivElement
 let searchBar: HTMLInputElement
 let similaritiesList: HTMLDivElement
 let similaritiesListObjects: HTMLDivElement
-let dateText: HTMLParagraphElement
 let inputDate: HTMLInputElement
 let timeScaleText: HTMLParagraphElement
+let dateText: HTMLParagraphElement
+let timeText: HTMLParagraphElement
 
 let planetOrbitsCheck: HTMLInputElement
 let NEOOrbitCheck: HTMLInputElement
@@ -60,24 +59,20 @@ let skybox: Skybox
 let celestialBodyList: CelestialBodyList
 
 //Global Variables
-let epoch = new Date(Date.now());  // start the calendar 
+let epoch = new Date();
 let simSpeedAbs = 1/2592000;
 let simSpeed = 1;
 let simSpeedPrint = 0;
 let distanceFromCamera = 0;
 let logMovement = false;
 
-
 Util.generateFont()
 
-
-
-
-
-
-function init() {
+export function init() {
   // ===== 🖼️ CANVAS, RENDERER, & SCENE =====
   {
+    epoch = new Date();
+
     canvas = document.querySelector(`canvas#${CANVAS_ID}`)!
     renderer = new WebGLRenderer({canvas, antialias: true, alpha: true})
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
@@ -85,145 +80,131 @@ function init() {
     renderer.shadowMap.type = PCFSoftShadowMap
     scene = new Scene();
 
+    searchOverlay = document.querySelector('div#search-overlay');
     searchBar = document.querySelector('input#body-search')!;
     similaritiesList = document.querySelector('div#similarities')!;
     similaritiesListObjects = document.querySelector('div#similarities-object')!;
-    dateText = document.querySelector('p#current-time-text')!;
+    dateText = document.querySelector('p#date-text')!;
+    timeText = document.querySelector('p#time-text')!;
     inputDate = document.querySelector('input#time-slider')!;
     timeScaleText = document.querySelector('p#time-scale');
 
     planetOrbitsCheck = document.querySelector("input#orbits-planet");
     NEOOrbitCheck = document.querySelector("input#orbits-neo");
 
-    // planetOrbitsCheck.checked = true;
-    // NEOOrbitCheck.checked = true;
+    planetOrbitsCheck.checked = true;
+    NEOOrbitCheck.checked = true;
 
-    // planetOrbitsCheck.addEventListener('change', () => {
-    //   if (planetOrbitsCheck.checked) {
-    //     planetOrbits.forEach((line) => {
-    //       scene.add(line);
-    //     });
-    //   } else {
-    //     planetOrbits.forEach((line) => {
-    //       scene.remove(line);
-    //     });
-    //   }
-    // });
-    //
-    // NEOOrbitCheck.addEventListener('change', () => {
-    //   if (NEOOrbitCheck.checked) {
-    //     NEOOrbits.forEach((line) => {
-    //       scene.add(line);
-    //     });
-    //   } else {
-    //     NEOOrbits.forEach((line) => {
-    //       scene.remove(line);
-    //     });
-    //   }
-    // });
+    document.addEventListener('keydown', (event) => {
+      if (event.ctrlKey && event.key === 'k') {
+        event.preventDefault();
+        openSearchOverlay()
+      }
+      if (event.key === 'Escape') {
+        closeSearchOverlay()
+      }
+    });
 
-    // dateText.textContent = epoch.toDateString();
-    //
-    // inputDate.addEventListener('input', () => {
-    //   simulatedTime();
-    //   if (celestialBodyList) {
-    //     celestialBodyList.getPlanets().forEach(celestialBody => {
-    //       celestialBody.setRotationSpeed(celestialBody.initialRotationBySecond * simSpeed * 2592000 / 32);
-    //     });
-    //   }
-    // });
+    planetOrbitsCheck.addEventListener('change', () => {
+      if (planetOrbitsCheck.checked) {
+        planetOrbits.forEach((line) => {
+          scene.add(line);
+        });
+      } else {
+        planetOrbits.forEach((line) => {
+          scene.remove(line);
+        });
+      }
+    });
 
-    // function simulatedTime() {
-    //   let value = Number(inputDate.value);
-    //   value = value - 50;
-    //   if (value < 0) {
-    //     simSpeed = -simSpeedAbs * Math.pow(2, -value / 2);
-    //     simSpeedPrint = -simSpeedAbs * Math.pow(2, -value / 2) * 40;
-    //   } else {
-    //     simSpeed = simSpeedAbs * Math.pow(2, value / 2);
-    //     simSpeedPrint = simSpeedAbs * Math.pow(2, value / 2) * 40;
-    //   }
-    //
-    //   timeScaleText.innerHTML = simSpeedPrint.toFixed(2).toString() + " days / sec";
-    // }
+    NEOOrbitCheck.addEventListener('change', () => {
+      if (NEOOrbitCheck.checked) {
+        NEOOrbits.forEach((line) => {
+          scene.add(line);
+        });
+      } else {
+        NEOOrbits.forEach((line) => {
+          scene.remove(line);
+        });
+      }
+    });
 
-    // simulatedTime();
+    inputDate.addEventListener('input', () => {
+      simulatedTime();
+      if (celestialBodyList) {
+        celestialBodyList.getPlanets().forEach(celestialBody => {
+          celestialBody.setRotationSpeed(celestialBody.initialRotationBySecond * simSpeed * 2592000 / 32);
+        });
+      }
+    });
 
-    // similaritiesList.style.display = 'none';
+    function simulatedTime() {
+      let value = Number(inputDate.value);
+      value = value - 50;
+      if (value < 0) {
+        simSpeed = -simSpeedAbs * Math.pow(2, -value / 2);
+        simSpeedPrint = -simSpeedAbs * Math.pow(2, -value / 2) * 40;
+      } else {
+        simSpeed = simSpeedAbs * Math.pow(2, value / 2);
+        simSpeedPrint = simSpeedAbs * Math.pow(2, value / 2) * 40;
+      }
 
-    // function listAll() {
-    //   similaritiesList.style.display = 'block';
-    //   let planetTitle = document.createElement('h4');
-    //   planetTitle.innerHTML = "Planets";
-    //   similaritiesListObjects.appendChild(planetTitle);
-    //
-    //   celestialBodyList.getPlanets().forEach((body) => {
-    //     generateElements(body);
-    //   });
-    //   let neoTitle = document.createElement('h4');
-    //   neoTitle.innerHTML = "Near Earth Objects";
-    //   similaritiesListObjects.appendChild(neoTitle);
-    //   celestialBodyList.getNeos().forEach((body) => {
-    //     generateElements(body);
-    //   });
-    // }
-    //
-    // function generateElements(body: CelestialBody) {
-    //   let bodyElement = document.createElement('a');
-    //   bodyElement.classList.add('dropdown-item');
-    //   bodyElement.innerHTML = body.getName();
-    //   if (bodyElement.innerHTML === selectedBody.getValue()?.getName()) {
-    //     bodyElement.classList.add('selected');
-    //   }
-    //   bodyElement.addEventListener('click', () => {
-    //     selectedBody.next(body);
-    //     similaritiesListObjects.innerHTML = '';
-    //     similaritiesList.style.display = 'none';
-    //   });
-    //   similaritiesListObjects.appendChild(bodyElement);
-    // }
-    //
-    // searchBar.addEventListener('focusout', () => {
-    //   setTimeout(() => {
-    //     similaritiesList.style.display = 'none';
-    //     similaritiesListObjects.innerHTML = '';
-    //   }, 250);
-    // })
-    //
-    // searchBar.addEventListener('focus', () => {
-    //   listAll();
-    // });
-    //
-    // searchBar.addEventListener('input', () => {
-    //   // let query = searchBar.value;
-    //   if (query.length === 0) {
-    //     similaritiesListObjects.innerHTML = '';
-    //     listAll()
-    //     return
-    //   }
-    //
-    //   similaritiesList.style.display = 'block';
-    //   similaritiesListObjects.innerHTML = '';
-    //   similaritiesList.style.display = 'block';
-    //   let planetTitle = document.createElement('h4');
-    //   planetTitle.innerHTML = "Planets";
-    //   similaritiesListObjects.appendChild(planetTitle);
-    //   celestialBodyList.getPlanets().forEach((body) => {
-    //     if (body.getName().toLowerCase().includes(query.toLowerCase())) {
-    //       generateElements(body);
-    //     }
-    //   });
-    //
-    //   let neoTitle = document.createElement('h4');
-    //   neoTitle.innerHTML = "Near Earth Objects";
-    //   similaritiesListObjects.appendChild(neoTitle);
-    //   let objects = celestialBodyList.getNeos();
-    //   objects.forEach((body) => {
-    //     if (body.getName().toLowerCase().includes(query.toLowerCase())) {
-    //       generateElements(body);
-    //     }
-    //   });
-    // });
+      timeScaleText.innerHTML = simSpeedPrint.toFixed(2).toString() + " days / sec";
+    }
+
+    simulatedTime();
+
+    similaritiesList.style.display = 'none';
+
+    searchBar.addEventListener('input', () => {
+      let query = searchBar.value;
+      if (query.length === 0) {
+        similaritiesListObjects.innerHTML = '';
+        listAll()
+        return
+      }
+
+      let planet = false;
+      let neo = false;
+
+      celestialBodyList.getPlanets().forEach((body) => {
+        if (body.getName().toLowerCase().includes(query.toLowerCase())) {
+          planet = true;
+        }
+      });
+
+      celestialBodyList.getNeos().forEach((body) => {
+        if (body.getName().toLowerCase().includes(query.toLowerCase())) {
+          neo = true;
+        }
+      });
+
+      similaritiesList.style.display = 'block';
+      similaritiesListObjects.innerHTML = '';
+      similaritiesList.style.display = 'block';
+
+      if (planet) {
+        celestialBodyList.getPlanets().forEach((body) => {
+          if (body.getName().toLowerCase().includes(query.toLowerCase())) {
+            generateElements(body);
+          }
+        });
+      }
+
+      if(neo){
+        celestialBodyList.getNeos().forEach((body) => {
+          if (body.getName().toLowerCase().includes(query.toLowerCase())) {
+            generateElements(body);
+          }
+        });
+      }
+
+      if (!planet && !neo){
+        let neoTitle = document.createElement('h2');
+        neoTitle.innerHTML = "No objects found!";
+        similaritiesListObjects.appendChild(neoTitle);
+      }
+    });
   }
 
   // ===== 💡 LIGHTS =====
@@ -287,7 +268,6 @@ function init() {
     celestialBodyList = CelestialBodyList.getInstance();
 
     let descriptionDict = Util.CSVToDict("data/infoPlanets.csv");
-    console.log(descriptionDict);
 
     let sun = new CelestialBody(
         "Sun",
@@ -670,7 +650,7 @@ function updateOrbits(bodies: CelestialBody[], NEOOrbits: any[], planetOrbits: a
   })
 }
 
-function animate() {
+export function animate() {
   requestAnimationFrame(animate);
 
   const delta = clock.getDelta();
@@ -697,6 +677,9 @@ function animate() {
   }
 
   updateTheDate();
+
+  dateText.innerHTML = epoch.toISOString().split('T')[0];
+  timeText.innerHTML = epoch.toTimeString().split(' ')[0];
 
   if (selectedBody.getValue() !== null && selectedBodyFullyTransitioned) {
     cameraControls.moveTo(
@@ -737,6 +720,43 @@ function updateTheDate() {
   } else {
     epoch.setTime(epoch.getTime() + simSpeed * 24 * 3600000);
   }  // 24 hours * milliseconds in an hour * simSpeed
+}
 
+  function listAll() {
+  similaritiesList.style.display = 'block';
+  celestialBodyList.getPlanets().forEach((body) => {
+    generateElements(body);
+  });
+  celestialBodyList.getNeos().forEach((body) => {
+    generateElements(body);
+  });
+}
+
+function generateElements(body: CelestialBody) {
+  let bodyElement = document.createElement('div');
+  bodyElement.classList.add('body-result');
+  bodyElement.innerHTML = body.getName();
+  if (bodyElement.innerHTML === selectedBody.getValue()?.getName()) {
+    bodyElement.classList.add('selected');
+  }
+  bodyElement.addEventListener('click', () => {
+    selectedBody.next(body);
+    similaritiesListObjects.innerHTML = '';
+    searchBar.value = "";
+    searchOverlay.style.display = 'none';
+  });
+  similaritiesListObjects.appendChild(bodyElement);
+}
+
+function openSearchOverlay() {
+  if (searchOverlay.style.display === 'none') {
+    searchOverlay.style.display = 'flex';
+  }
+  searchBar.focus();
+  listAll();
+}
+
+function closeSearchOverlay() {
+  searchOverlay.style.display = 'none';
 }
 

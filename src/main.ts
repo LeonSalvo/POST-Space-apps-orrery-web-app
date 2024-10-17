@@ -1,6 +1,7 @@
 import * as THREE from "three";
 import { LoadingManager } from "three";
 import i18next from "i18next";
+import * as scene from "./scene"
 
 const loadingManager = new LoadingManager();
 
@@ -48,6 +49,9 @@ function showCanvasAndHideLoader() {
 
   overCanvas.style.animation = 'fadeIn 1s forwards';
   resourcesDiv.style.animation = 'fadeOut 1s forwards';
+
+  scene.init();
+  scene.animate();
 
   setTimeout(() => {
     resourcesDiv.style.display = 'none';

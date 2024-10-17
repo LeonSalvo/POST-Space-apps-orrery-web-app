@@ -12,6 +12,8 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     -webkit-text-size-adjust: 100%;
+
+    overflow-y: hidden;
 }
 
 body {
@@ -23,14 +25,6 @@ body {
 body,
 html {
     height: 100%;
-}
-
-canvas {
-    height: 100%;
-    width: 100%;
-    outline: none;
-
-    background-color: #000;
 }
 
 h1 {
@@ -53,7 +47,6 @@ canvas {
     width: 100vw;
     z-index: 1;
     pointer-events: none;
-
     * {
         pointer-events: all;
     }
@@ -133,6 +126,11 @@ canvas {
 
 /* ------------------ SEARCH STYLES ------------------ */
 
+hr{
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+}
+
 .search-overlay{
     position: absolute;
     backdrop-filter: blur(5px);
@@ -141,9 +139,114 @@ canvas {
     z-index: 2;
     display: flex;
     flex-direction: column;
-    justify-content: center;
     align-items: center;
+    background-color: rgba(0, 0, 0, 0.35);
+}
+
+.search-content {
+    top: 10%;
+    position: relative;
+    width: 45rem;
+    padding: 2rem 3rem 2rem 2rem;
+    border-radius: 0.5em;
     background-color: rgba(0, 0, 0, 0.5);
 }
+
+.search-title {
+    margin-top: 0;
+    font-size: 3rem;
+}
+
+.search-content input {
+    width: 100%;
+    padding: 0.5em;
+    font-size: 1.2em;
+    border: none;
+    border-radius: 0.5em;
+    background-color: rgba(255, 255, 255, 0.12);
+    color: #fff;
+}
+
+#similarities{
+    margin-top: 1rem;
+}
+
+.selected {
+    background-color: rgba(255, 255, 255, 0.12);
+}
+
+.body-result{
+    background-color: rgba(255, 255, 255, 0.12);
+    margin: 0.5rem;
+    padding: 0.5rem;
+    border-radius: 1rem;
+}
+
+.similarities-list{
+    height: 45rem;
+    overflow-y: auto;
+}
+
+/* ------------------ TIME STYLE ------------------ */
+
+.time-containter{
+    position: absolute;
+    width: 20rem;
+    background-color: rgba(0, 0, 0, 0.75);
+    border-top-left-radius: 1rem;
+    border-top-right-radius: 1rem;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 0.5rem
+}
+
+.time-content{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.time-item{
+    display: flex;
+    align-items: center;
+}
+
+.time-dot{
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 50%;
+    margin-right: 0.5rem;
+}
+
+.green-dot{
+    background-color: #50ed9c;
+}
+
+.red-dot{
+    background-color: #ff4d4d;
+}
+
+.live-text{
+    color: #50ed9c;
+}
+
+.not-live-text{
+    color: #ff4d4d;
+}
+
+.time-text{
+    margin: 0;
+    font-size: 1.2rem;
+}
+
+.time-step{
+    width: 100%;
+    margin-top: 1rem;
+}
+
+/* ------------------ TOAST STYLE ------------------ */
+
+
 
 

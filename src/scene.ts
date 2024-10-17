@@ -399,7 +399,6 @@ function init() {
 
     celestialBodyList = CelestialBodyList.getInstance();
 
-    console.log(descriptionDict);
     let sun = new CelestialBody(
         "Sun",
         696340,
@@ -423,7 +422,6 @@ function init() {
     );
     celestialBodyList.addPlanet(sun);
     selectedBody.next(sun);
-    console.log(sun.getDescription());
 
     let earth = new CelestialBody(
         "Earth",
@@ -827,7 +825,7 @@ function animate() {
     )
 
     let distance = camera.position.distanceTo(selectedBodyValue.getPosition());
-    if (distance <= 20) {
+    if (distance <= selectedBodyValue.getRadius() * 4) {
       document.getElementById('planet-info').style.display = 'block';
       document.getElementById('planet-name').innerText = selectedBodyValue.getName();
       document.getElementById('planet-details').innerText = `Description: ${selectedBodyValue.getDescription()}`;

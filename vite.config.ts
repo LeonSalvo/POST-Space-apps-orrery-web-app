@@ -17,6 +17,7 @@ export default defineConfig({
         learn: path.resolve(__dirname, 'learn-more.html'),
         map: path.resolve(__dirname, 'map.html'),
       }
-    }
+    },
+    target: 'esnext',
   }
 });

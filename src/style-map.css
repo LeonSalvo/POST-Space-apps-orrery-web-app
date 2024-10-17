@@ -249,3 +249,19 @@ hr {
     color: #01e7e7;
     text-decoration: none;
 }
+
+.planet-info {
+    position: absolute;
+    right: 7rem;
+    top: 10rem;
+    width: 20rem;
+    padding: 10px;
+    background-color: rgba(0, 0, 0, 0.6);
+    color: white;
+    display: none;
+    align-content: center;
+    text-align: center;
+    align-items: center;
+    border-radius: 10px;
+
+}

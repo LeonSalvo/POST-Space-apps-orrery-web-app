@@ -135,6 +135,7 @@ textures.forEach(texture => {
   textureLoader.load(`${texture}`);
 });
 
+const descriptionDict = await Util.CSVToDict("data/infoPlanets.csv");
 function init() {
   // ===== 🖼️ CANVAS, RENDERER, & SCENE =====
   {
@@ -398,9 +399,7 @@ function init() {
 
     celestialBodyList = CelestialBodyList.getInstance();
 
-    let descriptionDict = Util.CSVToDict("data/infoPlanets.csv");
     console.log(descriptionDict);
-
     let sun = new CelestialBody(
         "Sun",
         696340,
@@ -420,10 +419,11 @@ function init() {
         0.000072921158553,
         new Euler(0, 0, 0, 'XYZ'),
         false,
-        descriptionDict["sun"]
+        descriptionDict.get("sun")
     );
     celestialBodyList.addPlanet(sun);
     selectedBody.next(sun);
+    console.log(sun.getDescription());
 
     let earth = new CelestialBody(
         "Earth",
@@ -444,7 +444,7 @@ function init() {
         0.000072921158553,
         new Euler(0.4396, 0.8641, 5.869, "XYZ"),
         true,
-        descriptionDict["earth"]
+        descriptionDict.get("earth")
     )
     celestialBodyList.addPlanet(earth);
 
@@ -467,7 +467,7 @@ function init() {
         0.00007088222,
         new Euler(0.4396, 0.8641, 5.869, "XYZ"),
         true,
-        descriptionDict["mars"]
+        descriptionDict.get("mars")
     )
     celestialBodyList.addPlanet(mars);
 
@@ -490,7 +490,7 @@ function init() {
         0.00017538081,
         new Euler(0.0545, 1.7541, 0.2575, "XYZ"),
         true,
-        descriptionDict["jupiter"]
+        descriptionDict.get("jupiter")
     );
     celestialBodyList.addPlanet(jupiter);
 
@@ -513,7 +513,7 @@ function init() {
         0.0000002994132,
         new Euler(3.0960, 1.3383, 0.9578, "XYZ"),
         true,
-        descriptionDict["venus"]
+        descriptionDict.get("venus")
     );
     celestialBodyList.addPlanet(venus);
 
@@ -536,7 +536,7 @@ function init() {
         0.00016329833,
         new Euler(0.4665, 1.9839, 0.4574, "XYZ"),
         true,
-        descriptionDict["saturn"],
+        descriptionDict.get("saturn"),
         {
           ringTexture: "saturn-rings-top.png",
           innerRadiusMult: 1.2,
@@ -564,7 +564,7 @@ function init() {
         0.00000123854412,
         new Euler(0.000593, 0.844493, 0.852917, "XYZ"),
         true,
-        descriptionDict["mercury"]
+        descriptionDict.get("mercury")
     );
     celestialBodyList.addPlanet(mercury);
 
@@ -587,7 +587,7 @@ function init() {
         -0.00010104518,
         new Euler(1.7074, 1.2915, 2.9839, "XYZ"),
         true,
-        descriptionDict["uranus"]
+        descriptionDict.get("uranus")
     );
     celestialBodyList.addPlanet(uranus);
 
@@ -633,7 +633,7 @@ function init() {
         0.001,
         new Euler(0.0269, 0.8497, 0.4647, "XYZ"),
         true,
-        descriptionDict["moon"]
+        descriptionDict.get("moon")
     );
     celestialBodyList.addPlanet(moon);
 
@@ -661,7 +661,7 @@ function init() {
               0.0000002994132,
               new Euler(0, 0, 0, 'XYZ'),
               true,
-                descriptionDict[asteroid.name]
+                descriptionDict.get(asteroid.name.toLowerCase())
           );
           celestialBodyList.addNeo(asteroidBody);
         }
@@ -711,7 +711,7 @@ function init() {
 
       if (!body) return;
 
-      cameraControls.setPosition(
+      await cameraControls.setPosition(
           selectedBody.getValue().getPosition().x,
           selectedBody.getValue().getPosition().y,
           selectedBody.getValue().getPosition().z - 4 * selectedBody.getValue().getRadius(),
@@ -811,18 +811,29 @@ function animate() {
   updateTheDate();
 
   if (selectedBody.getValue() !== null && selectedBodyFullyTransitioned) {
+    let selectedBodyValue = selectedBody.getValue();
+
     cameraControls.moveTo(
-        selectedBody.getValue().getPosition().x,
-        selectedBody.getValue().getPosition().y,
-        selectedBody.getValue().getPosition().z,
+        selectedBodyValue.getPosition().x,
+        selectedBodyValue.getPosition().y,
+        selectedBodyValue.getPosition().z,
         false
     )
     cameraControls.setTarget(
-        selectedBody.getValue().getPosition().x,
-        selectedBody.getValue().getPosition().y,
-        selectedBody.getValue().getPosition().z,
+        selectedBodyValue.getPosition().x,
+        selectedBodyValue.getPosition().y,
+        selectedBodyValue.getPosition().z,
         false
     )
+
+    let distance = camera.position.distanceTo(selectedBodyValue.getPosition());
+    if (distance <= 20) {
+      document.getElementById('planet-info').style.display = 'block';
+      document.getElementById('planet-name').innerText = selectedBodyValue.getName();
+      document.getElementById('planet-details').innerText = `Description: ${selectedBodyValue.getDescription()}`;
+    } else {
+      document.getElementById('planet-info').style.display = 'none';
+    }
 
   }
 

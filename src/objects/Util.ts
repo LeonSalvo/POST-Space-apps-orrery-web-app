@@ -52,7 +52,7 @@ export class Util {
         header: true,
         download: true,
         skipEmptyLines: true,
-        delimiter: ",",
+        delimiter: "\n",
         complete: function (results) {
           let map = new Map<string, string>();
           results.data.forEach((row: any) => {

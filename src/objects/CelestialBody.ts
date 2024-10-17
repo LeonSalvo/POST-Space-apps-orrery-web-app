@@ -470,6 +470,9 @@ export class CelestialBody {
   getRadius() {
     return this.radius;
   }
+  getDescription() {
+    return this.description;
+  }
 
     getRotationSpeed() {
         return this.rotationBySecond;

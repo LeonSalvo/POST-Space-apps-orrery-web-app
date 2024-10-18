@@ -1,5 +1,5 @@
 import * as THREE from 'three';
-import {Euler, FrontSide, Vector3} from 'three';
+import {Euler, FrontSide, Scene, Vector3} from 'three';
 import {IRing, Util} from "./Util";
 import {FontLoader} from "three/examples/jsm/loaders/FontLoader";
 import {TextGeometry} from "three/examples/jsm/geometries/TextGeometry";
@@ -214,6 +214,9 @@ export class CelestialBody {
 
             this.marker.position.copy(vector);
             this.mesh.position.copy(vector);
+            if (logMovement){
+                this.traceRealTimeOrbit(vector, lines, scene);
+            }
         } else {
             if (logMovement)
             {
@@ -228,23 +231,11 @@ export class CelestialBody {
                 this.mesh.children[0].position.copy(new Vector3(vector.x, vector.y, vector.z));
             }
             if (logMovement){
-                const orbitLine = new THREE.Line();
-                const geometry = new THREE.BufferGeometry();
-                const material = new THREE.LineBasicMaterial({ color: this.orbitColor });
-                this.orbPos = this.orbPos || new Queue<THREE.Vector3>();
-
-                Util.limitedEnqueue(this.orbPos, vector, 500, scene);
-                // Actualizar la geometría de la línea con los nuevos puntos
-                geometry.setFromPoints(this.orbPos.toArray());
-
-                orbitLine.geometry = geometry;
-                orbitLine.material = material;
-
-                Util.limitedEnqueue(lines, orbitLine, 500, scene);
-                scene.add(orbitLine);
+                this.traceRealTimeOrbit(vector, lines, scene);
             }
         }
     }
+
 
     calculateOrbitPosition(date: Date , simSpeed : number): THREE.Vector3 {
         var pos = this.propagate(this.trueAnomalyS)
@@ -351,6 +342,23 @@ export class CelestialBody {
         line.name = orbitName;
     
         return line;
+    }
+
+    traceRealTimeOrbit(vector: Vector3, lines: Queue<THREE.Line>, scene: THREE.Scene){
+        const orbitLine = new THREE.Line();
+        const geometry = new THREE.BufferGeometry();
+        const material = new THREE.LineBasicMaterial({ color: this.orbitColor });
+        this.orbPos = this.orbPos || new Queue<THREE.Vector3>();
+
+        Util.limitedEnqueue(this.orbPos, vector, 500, scene);
+        // Actualizar la geometría de la línea con los nuevos puntos
+        geometry.setFromPoints(this.orbPos.toArray());
+
+        orbitLine.geometry = geometry;
+        orbitLine.material = material;
+
+        Util.limitedEnqueue(lines, orbitLine, 500, scene);
+        scene.add(orbitLine);
     }
 
     realTimeOrbitUpdate() {

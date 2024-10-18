@@ -86,8 +86,10 @@ export class Util {
   static limitedEnqueue(queue: Queue<any>, element: any, limit: number, scene : three.Scene | null) {
     if (queue.length >= limit) {
       let toRemove = queue.dequeue();
-      if (scene != null){
+      console.log("Removing: ", toRemove);
+      if (scene !== null){
         scene.remove(toRemove);
+        console.log(queue.length);
       }
     }
     queue.enqueue(element);

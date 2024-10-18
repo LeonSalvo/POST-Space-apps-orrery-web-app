@@ -170,7 +170,7 @@ export class CelestialBody {
     }
 
     // Función de actualización del cuerpo celeste, a invocar cada frame
-    update(date: Date, simSpeed: number, distanceFromCamera: number, camera: THREE.Camera, logMovement: boolean) {
+    update(date: Date, simSpeed: number, distanceFromCamera: number, camera: THREE.Camera, logMovement: boolean,lines: Queue<THREE.Line>, scene: THREE.Scene) {
         let vector = this.calculateOrbitPosition(date, simSpeed);
 
         // Tamaño base del marcador
@@ -226,6 +226,22 @@ export class CelestialBody {
             this.mesh.position.copy(vector);
             if (this.ringMesh !== undefined) {
                 this.mesh.children[0].position.copy(new Vector3(vector.x, vector.y, vector.z));
+            }
+            if (logMovement){
+                const orbitLine = new THREE.Line();
+                const geometry = new THREE.BufferGeometry();
+                const material = new THREE.LineBasicMaterial({ color: this.orbitColor });
+                this.orbPos = this.orbPos || new Queue<THREE.Vector3>();
+
+                Util.limitedEnqueue(this.orbPos, vector, 500, scene);
+                // Actualizar la geometría de la línea con los nuevos puntos
+                geometry.setFromPoints(this.orbPos.toArray());
+
+                orbitLine.geometry = geometry;
+                orbitLine.material = material;
+
+                Util.limitedEnqueue(lines, orbitLine, 500, scene);
+                scene.add(orbitLine);
             }
         }
     }
@@ -376,12 +392,6 @@ export class CelestialBody {
         orbitLine.material = material;
 
         return orbitLine;
-    }
-
-    updateOrbit(lines, linesLimit, scene : THREE.Scene) {
-        const orbitLine = this.realTimeOrbitUpdate();
-        Util.limitedEnqueue(lines, orbitLine, linesLimit, scene);
-        scene.add(orbitLine);
     }
 
     julianDate(date: Date): number {

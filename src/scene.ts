@@ -758,9 +758,6 @@ function updateOrbits(NEOOrbits: any[], planetOrbits: any[]) {
     neos.forEach(body => {
       if (celestialBody[0] === body.getName()) {
         scene.remove(celestialBody[1]);
-        celestialBody[1] = body.realTimeOrbitUpdate();
-        Util.limitedEnqueue(lines, celestialBody[1], linesLimit, scene);
-        scene.add(celestialBody[1]);
       }
     })
   })
@@ -768,9 +765,6 @@ function updateOrbits(NEOOrbits: any[], planetOrbits: any[]) {
     planets.forEach(body => {
       if (celestialBody[0] === body.getName()) {
         scene.remove(celestialBody[1]);
-        celestialBody[1] = body.realTimeOrbitUpdate();
-        Util.limitedEnqueue(lines, celestialBody[1], linesLimit, scene);
-        scene.add(celestialBody[1]);
       }
     })
   })
@@ -781,30 +775,30 @@ function animate() {
 
   const delta = clock.getDelta();
 
-
+  if (logMovement){
+    updateOrbits(NEOOrbits, planetOrbits);
+  }
   // Actualizar los cuerpos celestes
   CelestialBodyList.getInstance().getPlanets().forEach(celestialBody => {
     distanceFromCamera = camera.position.distanceTo(celestialBody.marker.position);
     if (celestialBody.name === "Moon"){
       simSpeed = simSpeed/100;
-      celestialBody.update(epoch, simSpeed, distanceFromCamera, camera, logMovement);
+      celestialBody.update(epoch, simSpeed, distanceFromCamera, camera, logMovement, lines, scene);
       simSpeed = simSpeed*100;
     } else if(celestialBody.name === "Sun"){
-      celestialBody.update(epoch, simSpeed, distanceFromCamera, camera, logMovement);
+      celestialBody.update(epoch, simSpeed, distanceFromCamera, camera, logMovement, lines, scene);
       let position = celestialBody.getPosition();
       skybox.setPosition(position.x, position.y, position.z);
     }else {
-      celestialBody.update(epoch, simSpeed, distanceFromCamera, camera, logMovement);
+      celestialBody.update(epoch, simSpeed, distanceFromCamera, camera, logMovement, lines, scene);
     }
   })
 
   celestialBodyList.getNeos().forEach(celestialBody => {
     distanceFromCamera = camera.position.distanceTo(celestialBody.marker.position);
-    celestialBody.update(epoch, simSpeed, distanceFromCamera, camera, logMovement);
+    celestialBody.update(epoch, simSpeed, distanceFromCamera, camera, logMovement, lines, scene);
   });
-  if(logMovement == true){
-    updateOrbits(NEOOrbits, planetOrbits);
-  }
+
 
 
 

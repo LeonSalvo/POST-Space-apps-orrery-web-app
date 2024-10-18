@@ -204,7 +204,7 @@ export class CelestialBody {
                 return;
             }
         }
-        
+
         if (this.name === "Moon") {
             let earth = CelestialBodyList.getInstance().getPlanets().find(planet => planet.name === "Earth")!;
 
@@ -215,16 +215,18 @@ export class CelestialBody {
             this.marker.position.copy(vector);
             this.mesh.position.copy(vector);
         } else {
-            let sun = CelestialBodyList.getInstance().getPlanets().find(planet => planet.name === "Sun")!;
-            vector.setX(vector.x + sun.getPosition().x);
-            vector.setY(vector.y + sun.getPosition().y);
-            vector.setZ(vector.z + sun.getPosition().z);
-        }
-
-        this.marker.position.copy(vector);
-        this.mesh.position.copy(vector);
-        if (this.ringMesh !== undefined) {
-            this.mesh.children[0].position.copy(new Vector3(vector.x, vector.y, vector.z));
+            if (logMovement)
+            {
+                let sun = CelestialBodyList.getInstance().getPlanets().find(planet => planet.name === "Sun")!;
+                vector.setX(vector.x + sun.getPosition().x);
+                vector.setY(vector.y + sun.getPosition().y);
+                vector.setZ(vector.z + sun.getPosition().z);
+            }
+            this.marker.position.copy(vector);
+            this.mesh.position.copy(vector);
+            if (this.ringMesh !== undefined) {
+                this.mesh.children[0].position.copy(new Vector3(vector.x, vector.y, vector.z));
+            }
         }
     }
 
@@ -348,20 +350,20 @@ export class CelestialBody {
         this.orbPos = this.orbPos || new Queue<THREE.Vector3>();
     
         // Calcular la posición actual usando la propagación
-        const pos = this.propagate(this.trueAnomalyS);
+        const pos = this.getPosition();
         let sun = CelestialBodyList.getInstance().getPlanets().find(planet => planet.name === "Sun")!;
 
         if (this.name === "Moon") {
             let earth = CelestialBodyList.getInstance().getPlanets().find(planet => planet.name === "Earth")!;
 
-            currentPos.setX(pos[1] * Util.SIZE_SCALER + earth.getPosition().x);
-            currentPos.setY(pos[2] * Util.SIZE_SCALER + earth.getPosition().y);
-            currentPos.setZ(pos[0] * Util.SIZE_SCALER + earth.getPosition().z);
+            currentPos.setX(pos.x * Util.SIZE_SCALER + earth.getPosition().x);
+            currentPos.setY(pos.y * Util.SIZE_SCALER + earth.getPosition().y);
+            currentPos.setZ(pos.z * Util.SIZE_SCALER + earth.getPosition().z);
             
         } else {
-            currentPos.setX(pos[1] * Util.SIZE_SCALER + sun.getPosition().x);
-            currentPos.setY(pos[2] * Util.SIZE_SCALER + sun.getPosition().y);
-            currentPos.setZ(pos[0] * Util.SIZE_SCALER + sun.getPosition().z);
+            currentPos.setX(pos.x * Util.SIZE_SCALER + sun.getPosition().x);
+            currentPos.setY(pos.y * Util.SIZE_SCALER + sun.getPosition().y);
+            currentPos.setZ(pos.z * Util.SIZE_SCALER + sun.getPosition().z);
     }
         
         // Añadir la nueva posición a la lista de posiciones de la órbita
@@ -374,6 +376,12 @@ export class CelestialBody {
         orbitLine.material = material;
 
         return orbitLine;
+    }
+
+    updateOrbit(lines, linesLimit, scene : THREE.Scene) {
+        const orbitLine = this.realTimeOrbitUpdate();
+        Util.limitedEnqueue(lines, orbitLine, linesLimit, scene);
+        scene.add(orbitLine);
     }
 
     julianDate(date: Date): number {

@@ -781,6 +781,7 @@ function animate() {
 
   const delta = clock.getDelta();
 
+
   // Actualizar los cuerpos celestes
   CelestialBodyList.getInstance().getPlanets().forEach(celestialBody => {
     distanceFromCamera = camera.position.distanceTo(celestialBody.marker.position);
@@ -801,10 +802,11 @@ function animate() {
     distanceFromCamera = camera.position.distanceTo(celestialBody.marker.position);
     celestialBody.update(epoch, simSpeed, distanceFromCamera, camera, logMovement);
   });
-  
   if(logMovement == true){
     updateOrbits(NEOOrbits, planetOrbits);
   }
+
+
 
   updateTheDate();
 
@@ -858,7 +860,6 @@ function updateTheDate() {
   } else {
     epoch.setTime(epoch.getTime() + simSpeed * 24 * 3600000);
   }  // 24 hours * milliseconds in an hour * simSpeed
-
 
 }
 

@@ -789,6 +789,7 @@ function animate() {
       celestialBody.update(epoch, simSpeed, distanceFromCamera, camera, logMovement, lines, scene);
       let position = celestialBody.getPosition();
       skybox.setPosition(position.x, position.y, position.z);
+      pointLight.position.set(position.x, position.y, position.z);
     }else {
       celestialBody.update(epoch, simSpeed, distanceFromCamera, camera, logMovement, lines, scene);
     }

@@ -614,9 +614,10 @@ function init() {
         0.00010865669,
         new Euler(0.4947, 2.2994, 0.7848, "XYZ"),
         true,
-        descriptionDict["neptune"]
+        descriptionDict.get("neptune")
     );
     celestialBodyList.addPlanet(neptune);
+    console.log(descriptionDict.get("m"));
 
     let moon = new CelestialBody(
         "Moon",
@@ -701,12 +702,44 @@ function init() {
 
   // ===== 🕹️ CONTROLS =====
   {
-    cameraControls.addEventListener('update', () => {
+    cameraControls.addEventListener('control', () => {
       let distance = camera.position.distanceTo(skybox.getPosition())
       if (distance < renderSize * 0.9) {
         skybox.showGalaxy(false)
+        if (lines.length === 0 && !logMovement){
+            if (planetOrbitsCheck.checked) {
+                traceOrbits(celestialBodyList.getPlanets(), false);
+            }
+            if (NEOOrbitCheck.checked) {
+                traceOrbits(celestialBodyList.getNeos(), true);
+            }
+
+            CelestialBodyList.getInstance().getPlanets().forEach(celestialBody => {
+              celestialBody.marker.visible = true;
+              celestialBody.textMesh.visible = true;
+            });
+            CelestialBodyList.getInstance().getNeos().forEach(celestialBody => {
+              celestialBody.marker.visible = true;
+              celestialBody.textMesh.visible = true;
+            });
+        }
+
       } else {
         skybox.showGalaxy(true)
+        for (let i = 0; i < lines.length; i++) {
+          scene.remove(lines.dequeue());
+        }
+        console.log(lines.length);
+        if (!logMovement) {
+          CelestialBodyList.getInstance().getPlanets().forEach(celestialBody => {
+            celestialBody.marker.visible = false;
+            celestialBody.textMesh.visible = false;
+          })
+          CelestialBodyList.getInstance().getNeos().forEach(celestialBody => {
+            celestialBody.marker.visible = false;
+            celestialBody.textMesh.visible = false;
+          })
+        }
       }
     })
 

@@ -164,29 +164,35 @@ function init() {
 
     planetOrbitsCheck.addEventListener('change', () => {
       if (planetOrbitsCheck.checked) {
-        planetOrbits.forEach((line) => {
-          Util.limitedEnqueue(lines, line, linesLimit, scene);
-          scene.add(line);
+        planetOrbits.forEach((planetsLine) => {
+          scene.add(planetsLine[1]);
         });
       } else {
-        planetOrbits.forEach((line) => {
-          Util.limitedEnqueue(lines, line, linesLimit, scene);
-          scene.remove(line);
-        });
+        let planets = celestialBodyList.getPlanets();
+        planetOrbits.forEach(celestialBody => {
+          planets.forEach(body => {
+            if (celestialBody[0] === body.getName()) {
+              scene.remove(celestialBody[1]);
+            }
+          })
+        })
       }
     });
 
     NEOOrbitCheck.addEventListener('change', () => {
       if (NEOOrbitCheck.checked) {
-        NEOOrbits.forEach((line) => {
-          Util.limitedEnqueue(lines, line, linesLimit, scene);
-          scene.add(line);
+        NEOOrbits.forEach((neoLine) => {
+          scene.add(neoLine[1]);
         });
       } else {
-        NEOOrbits.forEach((line) => {
-          Util.limitedEnqueue(lines, line, linesLimit, scene);
-          scene.remove(line);
-        });
+        let neo = celestialBodyList.getNeos();
+        NEOOrbits.forEach(celestialBody => {
+          neo.forEach(body => {
+            if (celestialBody[0] === body.getName()) {
+              scene.remove(celestialBody[1]);
+            }
+          })
+        })
       }
     });
 
@@ -849,7 +855,7 @@ function updateTheDate() {
   if (simSpeed == 1) {
     epoch = new Date(Date.now());            // At maximum speed, increment calendar by a day for each clock-cycle.
   } else if (0 > simSpeed) {
-    epoch.setDate(epoch.getDate() - simSpeed * 24 * 3600000)
+    epoch.setTime(epoch.getTime() - simSpeed * 24 * 3600000)
   } else if (simSpeed == 0) {
     epoch.setDate(Date.now());
   } else {

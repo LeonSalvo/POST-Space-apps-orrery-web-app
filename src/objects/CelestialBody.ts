@@ -316,6 +316,9 @@ export class CelestialBody {
     }
     
     traceOrbits() {
+        if (this.name === "Moon") { // @ts-ignore
+            return;
+        }
 
         const geometry = new THREE.BufferGeometry(); // BufferGeometry instead of Geometry
         const material = new THREE.LineBasicMaterial({ color: this.orbitColor });
@@ -325,7 +328,7 @@ export class CelestialBody {
         // Loop to propagate the orbit positions
         while (i <= Math.PI * 2.001) {
             const pos = this.propagate(i);  // Propagate the orbit to get the position
-    
+
             orbPos.push(new THREE.Vector3(pos[1]*Util.SIZE_SCALER, pos[2]*Util.SIZE_SCALER, pos[0]*Util.SIZE_SCALER));
     
             i += 0.001;  // Increment the orbit angle

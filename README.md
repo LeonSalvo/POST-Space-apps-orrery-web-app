@@ -9,7 +9,7 @@ Explore the solar system with real-time data from NASA's API and learn more abou
 
 ## Demo
 You can visit the deployed version of the project here:  
-[**NeoNavigator Orrery**](https://matyrela.github.io/Space-apps-orrery-web-app/)
+[**NeoNavigator Orrery**](https://leonsalvo.github.io/POST-Space-apps-orrery-web-app)
 
 ---
 
@@ -25,7 +25,7 @@ Follow these instructions to clone the repository and run the project locally.
 1. Open your terminal or Git Bash.
 2. Clone the repository with the following command:
    ```bash
-   git clone https://github.com/Matyrela/Space-apps-orrery-web-app.git
+   git clone https://github.com/LeonSalvo/POST-Space-apps-orrery-web-app.git
 
 ### Navigate to the Project Folder
 

@@ -619,7 +619,6 @@ function init() {
             descriptionDict.get("neptune")
         );
         celestialBodyList.addPlanet(neptune);
-        console.log(descriptionDict.get("m"));
 
         let moon = new CelestialBody(
             "Moon",
@@ -704,7 +703,7 @@ function init() {
 
     // ===== 🕹️ CONTROLS =====
     {
-        cameraControls.addEventListener('control', () => {
+        cameraControls.addEventListener('update', () => {
             let distance = camera.position.distanceTo(skybox.getPosition())
             if (distance < renderSize * 0.9) {
                 skybox.showGalaxy(false)
@@ -872,7 +871,13 @@ function animate() {
         )
 
         let distance = camera.position.distanceTo(selectedBodyValue.getPosition());
-        if (distance <= selectedBodyValue.getRadius() * 8) {
+        let bodyRadius = selectedBodyValue.getRadius();
+        if (bodyRadius < 150) {
+            bodyRadius *= 40;
+        }else{
+            bodyRadius *= 10;
+        }
+        if (distance <= bodyRadius) {
             document.getElementById('planet-info').style.display = 'block';
             document.getElementById('planet-name').innerText = selectedBodyValue.getName();
             document.getElementById('planet-details').innerText = `Description: ${selectedBodyValue.getDescription()}`;

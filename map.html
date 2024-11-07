@@ -5,7 +5,9 @@
     <link rel="icon" type="image/svg+xml" href="/logo.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>NeoNavigator | Map </title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css">
     <link rel="stylesheet" href="/src/style-map.css" />
+    
   </head>
   <body>
   <div id="resources">
@@ -20,7 +22,7 @@
     <p id="percentage">0%</p>
   </div>
 
-    <div class="over-canvas" id="over-canvas" style="opacity: 0">
+    <div class="over-canvas" id="over-canvas" style="opacity: 0; overflow: hidden">
       <div class="back-button">
         <a href="index.html">Back</a>
       </div>
@@ -42,24 +44,29 @@
       </div>
 
       <div class="time-slider">
-        <input type="checkbox" id="orbits-planet"/>
+        <input type="checkbox" id="orbits-planet" />
         <label for="orbits-planet">Show planet orbits</label>
-
         <br>
-
-        <input type="checkbox" id="orbits-neo"/>
+    
+        <input type="checkbox" id="orbits-neo" />
         <label for="orbits-neo">Show NEO orbits</label>
         <br>
-
-        <input type="checkbox" id="log-movement"/>
-        <label for="log-movement"> Show logaritmic movement</label>
-
+    
+        <input type="checkbox" id="log-movement" />
+        <label for="log-movement">
+            Show Solar Revolution 
+            <span title="Movement of the Sun in the galaxy" style="cursor: pointer; margin-left: 5px;">
+                <i class="fas fa-info-circle"></i>
+            </span>
+        </label>
+    
         <hr>
-
+    
         <p id="time-scale">0.00 days / sec</p>
         <input type="range" id="time-slider" min="0" max="100" value="50" class="slider" />
-      </div>
     </div>
+    
+    
 
     <div id="gui-container"></div>
     <canvas id="scene"></canvas>
